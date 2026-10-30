@@ -1,0 +1,45 @@
+name: test
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  edit:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ffmpeg
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update && sudo apt-get install -y ffmpeg; fi
+          if [ "$RUNNER_OS" = "macOS" ]; then brew install ffmpeg; fi
+          if [ "$RUNNER_OS" = "Windows" ]; then choco install ffmpeg -y --no-progress; fi
+      - run: pip install pillow
+      - name: Check setup
+        run: python skills/video-editing-skill/scripts/check_setup.py
+      - name: Make a test video with pauses and a transcript
+        run: |
+          ffmpeg -v error -f lavfi -i testsrc2=size=1280x720:rate=30 -f lavfi -i "sine=frequency=300,volume=enable='between(mod(t\,6)\,3\,6)':volume=0" -t 24 -c:v libx264 -pix_fmt yuv420p -c:a aac test.mp4
+          printf '1\n00:00:00,500 --> 00:00:02,800\nThis is the first take, um, of the test.\n\n2\n00:00:06,500 --> 00:00:08,800\nThis is the first take of the test.\n\n3\n00:00:12,500 --> 00:00:14,800\nThe the second part works on every machine.\n\n4\n00:00:18,500 --> 00:00:20,800\nAnd this is the end.\n' > test.srt
+      - name: Transcribe (existing transcript route)
+        run: python skills/video-editing-skill/scripts/transcribe.py test.mp4 --from test.srt --out work
+      - name: Plan and render
+        run: |
+          printf '{"video":"test.mp4","captions":{"srt":true,"burn":true},"chapters":[[0,"Start"],[12,"Middle"],[18,"End"]]}' > edit.json
+          python skills/video-editing-skill/scripts/edit_video.py edit.json --transcript work/transcript.json --out edited --plan
+          python skills/video-editing-skill/scripts/edit_video.py edit.json --transcript work/transcript.json --out edited
+      - name: Verify output
+        run: |
+          python - <<'PY'
+          import json, os
+          m = json.load(open("edited/manifest.json"))
+          assert os.path.exists(m["edited"]) and m["seconds_after"] < m["seconds_before"], m
+          assert os.path.getsize("edited/captions.srt") > 0
+          print("ok", m["summary"])
+          PY
