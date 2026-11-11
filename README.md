@@ -1,10 +1,12 @@
 # Video Editing Skill for Claude Code, Codex, Cursor and OpenClaw
 
-**Video Editing Skill** is a free, open-source AI agent skill that edits talking-head videos (YouTube videos, course lessons, product demos, video podcasts, vlogs) the way a human editor does the first pass. Claude Code, Codex, Cursor, OpenClaw and other agents that run scripts use it to transcribe the recording with word timestamps, shrink long pauses to natural beats, remove "um"s and "uh"s, stutters and retakes (keeping the last take), place every cut where the sound actually stops, mask the jump cuts with punch-ins, clean and level the audio to -14 LUFS, and write an SRT caption file and YouTube chapters. You approve the cut list before anything renders, and nothing posts without your yes. Everything runs on your own machine with Python, ffmpeg and Pillow. No paid API required. MIT licensed.
+**Video Editing Skill** is a free, open-source AI agent skill that edits talking-head videos (YouTube videos, course lessons, product demos, video podcasts, vlogs) the way a human editor does the first pass. Claude Code, Codex, Cursor, OpenClaw and other agents that run scripts use it to transcribe the recording with word timestamps, shrink long pauses to natural beats, remove "um"s and "uh"s, stutters and retakes (keeping the last take), place every cut where the sound actually stops, mask the jump cuts with punch-ins, clean and level the audio to -14 LUFS, and write an SRT caption file and YouTube chapters. You approve the cut list before anything renders, then the agent can post the edited video to YouTube, TikTok, Instagram Reels, Facebook and LinkedIn, only after your yes. Everything runs on your own machine with Python, ffmpeg and Pillow. No paid API required. MIT licensed.
 
 ```bash
 npx skills add social-media-skills/video-editing-skill -g -a claude-code -y
 ```
+
+**Post it from your agent:** the skill posts the edited video with WoopSocial, made by the team behind this skill. [Create a free account](https://app.woopsocial.com/signup?utm_source=video-editing-skill&utm_medium=readme&utm_content=top) (2 social accounts, no card) and your agent connects it while the video renders.
 
 ![Before and after frames from a NASA interview, above a timeline of kept and cut time: 6:39 edited to 5:57, 11% shorter, with the interview's question cards kept](skills/video-editing-skill/examples/nasa-interview/showcase.png)
 

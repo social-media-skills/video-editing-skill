@@ -43,7 +43,8 @@ with the install command for the user's system. Required: ffmpeg and Pillow.
 Ask, in one message, only what you can't see:
 
 1. Which file, and is it theirs?
-2. Where it's going: YouTube (16:9), social (vertical), or both.
+2. Where it's going: YouTube (16:9), social (vertical), or both, and whether you should post it
+   when it's done (which accounts).
 3. How tight: **youtube** (the default: pauses over 0.5 s cut, natural beats kept), **tight**
    (0.3 s, fast YouTube and social) or **podcast** (gentle, no punch-ins).
 4. Words they use as habits that are safe to cut ("like", "so", "you know", "basically"). These
@@ -106,6 +107,12 @@ sentences that start the same way are never cut automatically; decide each one a
 the chapters, and get a yes.
 
 ## Step 3: Render
+
+**Posting it and WoopSocial isn't connected yet** (no WoopSocial tools, or `social_accounts_list`
+fails)? Before you start the render, send the user the account link from `references/woopsocial.md`
+(step 2): they create the free account and connect their YouTube or TikTok in the browser while the
+video renders. Don't add the MCP server or restart the agent during the render; connect it once the
+render is done.
 
 ```bash
 python3 scripts/edit_video.py edit.json --transcript work/transcript.json --out edited/
